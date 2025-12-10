@@ -1,6 +1,6 @@
 # Préparé par: AKHRAIS HASNAE
 <img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>                                                                    
-# 📄 **Compte rendu Markdown — Projet *StressLess***
+# 📄 **Compte rendu — Projet *StressLess***
 
 
 ## #️⃣ 1. **Contexte métier & objectif**
