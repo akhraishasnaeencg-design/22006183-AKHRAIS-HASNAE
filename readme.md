@@ -1,6 +1,7 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" style="height:64px;margin-right:32px"/>
+# Préparé par:AKHRAIS HASNAE
+<img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>
 
-# 🧠 Projet StressLess v1 2025Q1 — Assistant IA de gestion du stress
+# Projet StressLess v1 2025Q1 — Assistant IA de gestion du stress
 
 Ce projet met en place un assistant IA capable d'analyser des situations de stress professionnel, d'identifier les facteurs en jeu, d'évaluer la sévérité globale et de proposer des recommandations personnalisées et priorisées.[^1]
 
