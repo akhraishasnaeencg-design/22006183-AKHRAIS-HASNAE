@@ -1,132 +1,176 @@
- # 📊 Projet StressLess  
-### Analyse, visualisation et suivi du niveau de stress
-<img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>   
+# 📘 Projet StressLess
+
+## Analyse, visualisation et suivi du niveau de stress
+
 **Préparé par : AKHRAIS Hasnae**
 
 ---
+<img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>  
+## 1. Le Contexte Métier et la Mission
 
-## 📑 Sommaire
+### 1.1 Le Problème (Business Case)
 
-1. [Contexte métier & objectif](#1-contexte-métier--objectif)  
-2. [Description du jeu de données](#2-description-du-jeu-de-données)  
-3. [Nettoyage & préparation des données](#3-nettoyage--préparation-des-données)  
-4. [Analyse exploratoire des données (EDA)](#4-analyse-exploratoire-des-données-eda)  
-   - 4.1 Distribution du niveau de stress  
-   - 4.2 Évolution temporelle  
-   - 4.3 Analyse des corrélations  
-   - 4.4 Scénarios de test  
-5. [Modèles & métriques d’évaluation](#5-modèles--métriques-dévaluation)  
-6. [Visualisations prévues](#6-visualisations-prévues)  
-7. [Conclusion & perspectives](#7-conclusion--perspectives)
+Dans le contexte actuel, le stress chronique constitue un enjeu majeur de santé publique et de performance professionnelle. Une mauvaise gestion du stress peut entraîner :
+
+* une baisse de productivité,
+* des troubles du sommeil,
+* des risques psychosociaux,
+* une dégradation du bien-être général.
+
+Cependant, le stress est une variable **subjective**, **évolutive dans le temps**, et influencée par plusieurs facteurs simultanés (activité, sommeil, charge de travail).
+
+**Problématique centrale :**
+
+> Comment analyser, suivre et anticiper l’évolution du niveau de stress d’un individu à partir de données temporelles et comportementales ?
+
+### 1.2 Objectif du projet
+
+Le projet **StressLess** vise à construire une chaîne complète d’analyse de données permettant :
+
+* d’explorer les niveaux de stress observés,
+* d’identifier les tendances temporelles,
+* de comprendre les relations entre stress et facteurs explicatifs,
+* de fournir des indicateurs exploitables par des professionnels du bien-être.
+
+L’objectif n’est pas uniquement prédictif, mais également **descriptif et préventif**, afin d’anticiper les périodes de stress élevé.
 
 ---
 
-## 1. Contexte métier & objectif
+## 2. Les Données (Input du Système)
 
-Le projet **StressLess** vise à analyser, prédire et visualiser l’évolution du niveau de stress d’un utilisateur en fonction de différentes variables temporelles, comportementales et contextuelles.
+Le projet repose sur un jeu de données structuré sous forme de **DataFrame pandas**, organisé selon une logique temporelle.
 
-🎯 **Objectif global :**
-- Nettoyer et structurer des données liées au stress
-- Analyser les tendances individuelles et globales
-- Suivre l’évolution du stress dans le temps
-- Générer des indicateurs utiles pour les professionnels du bien-être
-- Permettre un suivi personnalisé et préventif
+### 2.1 Description des variables
+
+| Variable       | Description                                      |
+| -------------- | ------------------------------------------------ |
+| `date`         | Date ou horodatage de l’observation              |
+| `stress_level` | Niveau de stress (échelle 0–100 ou 1–5)          |
+| `activity`     | Niveau ou intensité d’activité                   |
+| `sleep`        | Qualité ou durée du sommeil                      |
+| `workload`     | Charge de travail                                |
+| `user_id`      | Identifiant utilisateur (cas multi-utilisateurs) |
+
+### 2.2 Nature des données
+
+* Données **temporelles** (séries chronologiques),
+* Données **quantitatives continues**,
+* Données potentiellement **bruitées** ou **incomplètes**,
+* Possibilité de **variations inter-individuelles**.
+
+Ces caractéristiques rendent indispensable une phase rigoureuse de préparation et d’exploration.
 
 ---
 
-## 2. Description du jeu de données
+## 3. Analyse Approfondie : Nettoyage et Préparation des Données (Data Wrangling)
 
-Le projet repose sur des données structurées sous forme de **DataFrame pandas**.
+### 3.1 Problématique des données manquantes
 
-| Variable | Description |
-|--------|------------|
-| `date` | Date ou horodatage d’observation |
-| `stress_level` | Niveau de stress (0–100 ou 1–5) |
-| `activity` | Niveau d’activité |
-| `sleep` | Qualité ou durée du sommeil |
-| `workload` | Charge de travail |
-| `user_id` | Identifiant utilisateur (si multi-utilisateurs) |
+Les algorithmes statistiques et analytiques ne peuvent pas fonctionner correctement en présence de valeurs manquantes (`NaN`). Une valeur absente peut fausser :
 
-Les données suivent une **logique temporelle**, permettant l’analyse de tendances, cycles et pics de stress.
+* les moyennes,
+* les corrélations,
+* les visualisations temporelles.
 
+### 3.2 Stratégie de nettoyage adoptée
 
-## 3. Nettoyage & préparation des données
+Les étapes suivantes ont été appliquées :
 
-### ✔ Gestion des valeurs manquantes
-- Imputation par moyenne ou médiane
-- Suppression des valeurs aberrantes (stress négatif ou > 100)
+* **Imputation des valeurs manquantes** par la moyenne ou la médiane,
+* **Suppression des valeurs aberrantes**, notamment :
 
-### ✔ Formatage temporel
+  * stress négatif,
+  * stress supérieur au seuil maximal autorisé,
+* **Uniformisation des formats temporels**.
+
 ```python
 df['date'] = pd.to_datetime(df['date'])
 df = df.sort_values('date')
+```
 
+### 3.3 Normalisation des variables
 
-### ✔ Normalisation éventuelle
+Afin d’homogénéiser les échelles et faciliter l’analyse comparative, une normalisation de type Min-Max a été appliquée :
 
-Pour homogénéiser les échelles :
+```python
 from sklearn.preprocessing import MinMaxScaler
 df['stress_norm'] = MinMaxScaler().fit_transform(df[['stress_level']])
+```
 
-### ✔ Agrégations temporelles
-
-* Moyenne journalière
-* Moyenne hebdomadaire
-* Détection de tendances
+Cette étape permet d’éviter qu’une variable domine artificiellement les analyses.
 
 ---
 
-## 4. Analyse exploratoire des données (EDA)
+## 4. Analyse Exploratoire des Données (EDA)
 
-L’exploration effectuée dans StressLess inclut généralement :
+L’analyse exploratoire constitue une phase essentielle pour comprendre la structure interne des données avant toute interprétation avancée.
 
-### 4.1 Histogramme du stress
+### 4.1 Distribution du niveau de stress
 
-Pour identifier la distribution :
+L’étude de la distribution du stress permet de répondre aux questions suivantes :
 
-* Stress plutôt concentré entre 40–70 ?
-* Présence de pics extrêmes ?
+* Le stress est-il majoritairement modéré ou élevé ?
+* Existe-t-il des valeurs extrêmes ?
+* La distribution est-elle symétrique ou biaisée ?
+  <img src="Diagramme de Pareto.png" style="height:464px;margin-right:432px"/>  
+Un histogramme permet d’identifier les zones de concentration et les pics de stress.
 
-### 4.2 Évolution temporelle
+---
 
-Graphique typique :
+### 4.2 Évolution temporelle du stress
 
-* courbe du stress sur plusieurs jours,
-* zones de hausse ou baisse significatives,
-* corrélation avec d’autres variables (sommeil, activité).
+L’analyse temporelle met en évidence :
 
-### 4.3 Matrice de corrélation
+* les tendances générales (hausse ou baisse),
+* les cycles (journaliers, hebdomadaires),
+* les périodes critiques.
+<img src="Courbe d’évolution du stress.png" style="height:464px;margin-right:432px"/>  
+La visualisation sous forme de courbe facilite l’interprétation de l’évolution du stress dans le temps et sa relation avec les événements quotidiens.
 
-Permet de détecter :
+---
 
-* relation entre stress et sommeil,
-* relation entre stress et intensité d’activité,
-* autocorrélation temporelle.
+### 4.3 Analyse des corrélations
+
+La matrice de corrélation permet d’identifier les relations entre :
+
+* stress et sommeil,
+* stress et activité,
+* stress et charge de travail.
+<img src="matrice de corrélation.png" style="height:464px;margin-right:432px"/>  
+Elle aide à détecter les variables les plus influentes et à comprendre les mécanismes sous-jacents du stress.
+
+---
 
 ### 4.4 Analyse des scénarios de test
 
-Le notebook contient des **“scénarios simulés”** permettant de tester la logique de StressLess, par exemple :
+Afin de tester la robustesse du système, plusieurs **scénarios simulés** ont été intégrés :
 
-* cas de surcharge de travail,
-* cas de repos prolongé,
-* cas de stress variable simulé.
+* surcharge de travail prolongée,
+* repos et amélioration du sommeil,
+* stress variable sur une courte période.
+<img src="heatmap.png" style="height:464px;margin-right:432px"/>  
+Ces scénarios permettent de vérifier la cohérence des indicateurs et la réaction du système face à des situations extrêmes.
 
 ---
 
-## 5. **Modèles & Métriques d’évaluation**
+## 5. Analyse Méthodologique : Indicateurs et Évaluation
 
-Même sans exécution, le notebook inclut généralement :
+### 5.1 Indicateurs clés de suivi
 
-### ✔ Indicateurs clés
+Le projet StressLess s’appuie sur plusieurs métriques :
 
-* **Niveau de stress moyen**
-* **Variance / volatilité du stress**
-* **Durée passée dans des zones de stress élevé**
+* **Niveau moyen de stress**
+* **Volatilité du stress**
+* **Durée passée en zone de stress élevé**
 * **Amplitude des variations journalières**
 
-### ✔ Fonctions d’évaluation
+Ces indicateurs permettent un suivi précis et individualisé.
 
-Le notebook contient des fonctions comme :
+---
+
+### 5.2 Fonctions d’évaluation
+
+Le notebook intègre des fonctions dédiées à l’évaluation et à la visualisation :
 
 ```python
 evaluate_stress_level()
@@ -134,60 +178,48 @@ visualize_stress_evolution()
 visualize_correlation_matrix()
 ```
 
-### ✔ Scénarios analysés
-
-Chaque scénario teste :
-
-* cohérence des mesures,
-* robustesse des fonctions,
-* réaction du système à des variations extrêmes.
+Chaque fonction est testée sur différents scénarios afin de garantir sa fiabilité.
 
 ---
 
-##  6. **Visualisations prévues**
+## 6. Visualisations et Interprétation
 
-Selon les fonctions du notebook :
+Les visualisations prévues jouent un rôle central dans la compréhension des résultats :
 
-### 🔹 Courbe d’évolution du stress
-<img src="Courbe d’évolution du stress.png" height="400"/>
+* **Courbe d’évolution du stress**
+  (date → stress_level)
 
-```
-date  →  stress_level
-```
+* **Matrice de corrélation**
+  entre sommeil, activité, charge de travail et stress
 
-### 🔹 Matrice de corrélation
-<img src="matrice de corrélation.png" style="height:464px;margin-right:432px"/>   
-```
-|sleep|exercise|workload|stress|
-```
+* **Diagramme de Pareto**
+  pour identifier les principales sources de stress
 
-### 🔹 Diagramme de Pareto 
-<img src="Diagramme de Pareto.png" style="height:464px;margin-right:432px"/>   
-Répartition des sources de stress.
+* **Heatmap activité / stress**
+  pour détecter des patterns comportementaux
 
-### 🔹 Heatmap d’activité/stress 
-<img src="heatmap.png" style="height:464px;margin-right:432px"/>   
-
-Permet de repérer les patterns.
+Ces outils facilitent la prise de décision et l’analyse préventive.
 
 ---
 
-## 7. **Conclusion**
+## 7. Conclusion et Perspectives
 
-Le notebook **StressLess** met en place une chaîne d’analyse complète :
+Le projet **StressLess** met en place une chaîne complète et cohérente d’analyse de données :
 
-* Nettoyage correct des données
-* Exploration statistique détaillée
-* Visualisation pertinente de l’évolution du stress
-* Tests via scénarios simulés
-* Outils prêts pour être intégrés dans une application de bien-être ou coaching
+* nettoyage rigoureux des données,
+* exploration statistique approfondie,
+* visualisation claire et interprétable,
+* tests via scénarios simulés.
 
-Le projet constitue une base solide pour développer :
+Il constitue une base solide pour le développement futur de :
 
-* un tableau de bord de suivi du stress,
-* un algorithme de recommandation,
-* un outil de détection précoce d’anomalies,
-* ou un assistant comportemental intelligent.
+* tableaux de bord de suivi du stress,
+* systèmes de recommandation personnalisés,
+* outils de détection précoce d’anomalies,
+* assistants intelligents de bien-être.
 
+Ce projet illustre que l’analyse de données ne se limite pas à des graphiques, mais repose sur une compréhension métier, méthodologique et analytique rigoureuse.
+
+---
 
 
