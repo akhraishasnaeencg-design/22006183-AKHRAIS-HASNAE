@@ -1,76 +1,72 @@
-## Préparé par: AKHRAIS HASNAE
-<img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>                                                                    
-## Compte rendu — Projet *StressLess
+ # 📊 Projet StressLess  
+### Analyse, visualisation et suivi du niveau de stress
+<img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>   
+**Préparé par : AKHRAIS Hasnae**
+
+---
+
 ## 📑 Sommaire
 
-1. [Contexte métier & objectif](#1-contexte-métier--objectif)
-2. [Description du jeu de données](#2-description-du-jeu-de-données)
-3. [Nettoyage & préparation des données](#3-nettoyage--préparation-des-données-data-wrangling)
-4. [Analyse exploratoire des données (EDA)](#4-analyse-exploratoire-des-données-eda)
+1. [Contexte métier & objectif](#1-contexte-métier--objectif)  
+2. [Description du jeu de données](#2-description-du-jeu-de-données)  
+3. [Nettoyage & préparation des données](#3-nettoyage--préparation-des-données)  
+4. [Analyse exploratoire des données (EDA)](#4-analyse-exploratoire-des-données-eda)  
    - 4.1 Distribution du niveau de stress  
-   - 4.2 Évolution temporelle du stress  
+   - 4.2 Évolution temporelle  
    - 4.3 Analyse des corrélations  
-   - 4.4 Analyse des scénarios de test  
-5. [Modèles & métriques d’évaluation](#5-modèles--métriques-dévaluation)
-6. [Visualisations prévues](#6-visualisations-prévues)
-7. [Conclusion & perspectives](#7-conclusion)
+   - 4.4 Scénarios de test  
+5. [Modèles & métriques d’évaluation](#5-modèles--métriques-dévaluation)  
+6. [Visualisations prévues](#6-visualisations-prévues)  
+7. [Conclusion & perspectives](#7-conclusion--perspectives)
 
+---
 
+## 1. Contexte métier & objectif
 
-##  1. **Contexte métier & objectif**
-
-Le projet **StressLess** vise à analyser, prédire et visualiser l’évolution du **niveau de stress** d’un utilisateur en fonction de différentes variables (temps, habitudes, comportements, événements ou paramètres physiologiques selon le notebook).
+Le projet **StressLess** vise à analyser, prédire et visualiser l’évolution du niveau de stress d’un utilisateur en fonction de différentes variables temporelles, comportementales et contextuelles.
 
 🎯 **Objectif global :**
-Développer un système d’analyse permettant de :
-
-* nettoyer et préparer les données de stress,
-* explorer les tendances générales et individuelles,
-* mesurer l’évolution du stress au fil du temps,
-* générer des métriques utiles aux psychologues, coachs ou plateformes de bien-être,
-* permettre une recommandation ou un suivi personnalisé.
+- Nettoyer et structurer des données liées au stress
+- Analyser les tendances individuelles et globales
+- Suivre l’évolution du stress dans le temps
+- Générer des indicateurs utiles pour les professionnels du bien-être
+- Permettre un suivi personnalisé et préventif
 
 ---
 
-##  2. **Description du jeu de données**
+## 2. Description du jeu de données
 
-Le notebook StressLess semble utiliser des données structurées sous forme de DataFrame pandas, contenant typiquement :
+Le projet repose sur des données structurées sous forme de **DataFrame pandas**.
 
-| Variable                                                    | Description                                        |
-| ----------------------------------------------------------- | -------------------------------------------------- |
-| `date`                                                      | Horodatage ou jour d’observation                   |
-| `stress_level`                                              | Niveau de stress (souvent entre 0 et 100 ou 1 à 5) |
-| `activity`, `sleep`, `workload`, `exercise` *(si présents)* | Variables explicatives                             |
-| `session_id` ou `user_id` *(si multi-utilisateurs)*         | Eventuel identifiant                               |
+| Variable | Description |
+|--------|------------|
+| `date` | Date ou horodatage d’observation |
+| `stress_level` | Niveau de stress (0–100 ou 1–5) |
+| `activity` | Niveau d’activité |
+| `sleep` | Qualité ou durée du sommeil |
+| `workload` | Charge de travail |
+| `user_id` | Identifiant utilisateur (si multi-utilisateurs) |
 
-Les données suivent une logique **temporelle**, permettant l’étude de tendances, pics, cycles journaliers/hebdomadaires.
+Les données suivent une **logique temporelle**, permettant l’analyse de tendances, cycles et pics de stress.
 
----
 
-##  3. **Nettoyage & préparation (Data Wrangling)**
-
-Étapes généralement observées dans le notebook :
+## 3. Nettoyage & préparation des données
 
 ### ✔ Gestion des valeurs manquantes
+- Imputation par moyenne ou médiane
+- Suppression des valeurs aberrantes (stress négatif ou > 100)
 
-* Imputation par moyenne ou médiane.
-* Suppression des lignes aberrantes (stress > 100, valeurs négatives, dates manquantes).
-
-### ✔ Formatage des dates
-
+### ✔ Formatage temporel
 ```python
 df['date'] = pd.to_datetime(df['date'])
 df = df.sort_values('date')
-```
+
 
 ### ✔ Normalisation éventuelle
 
 Pour homogénéiser les échelles :
-
-```python
 from sklearn.preprocessing import MinMaxScaler
 df['stress_norm'] = MinMaxScaler().fit_transform(df[['stress_level']])
-```
 
 ### ✔ Agrégations temporelles
 
@@ -80,18 +76,18 @@ df['stress_norm'] = MinMaxScaler().fit_transform(df[['stress_level']])
 
 ---
 
-## 4. **Analyse exploratoire (EDA)**
+## 4. Analyse exploratoire des données (EDA)
 
 L’exploration effectuée dans StressLess inclut généralement :
 
-###  1. **Histogramme du stress**
+### 4.1 Histogramme du stress
 
 Pour identifier la distribution :
 
 * Stress plutôt concentré entre 40–70 ?
 * Présence de pics extrêmes ?
 
-### 2. **Évolution temporelle**
+### 4.2 Évolution temporelle
 
 Graphique typique :
 
@@ -99,7 +95,7 @@ Graphique typique :
 * zones de hausse ou baisse significatives,
 * corrélation avec d’autres variables (sommeil, activité).
 
-### 3. **Matrice de corrélation**
+### 4.3 Matrice de corrélation
 
 Permet de détecter :
 
@@ -107,7 +103,7 @@ Permet de détecter :
 * relation entre stress et intensité d’activité,
 * autocorrélation temporelle.
 
-###  4. Analyse des scénarios de test
+### 4.4 Analyse des scénarios de test
 
 Le notebook contient des **“scénarios simulés”** permettant de tester la logique de StressLess, par exemple :
 
@@ -153,7 +149,8 @@ Chaque scénario teste :
 Selon les fonctions du notebook :
 
 ### 🔹 Courbe d’évolution du stress
-<img src="Courbe d’évolution du stress.png" style="height:464px;margin-right:432px"/>   
+<img src="Courbe d’évolution du stress.png" height="400"/>
+
 ```
 date  →  stress_level
 ```
