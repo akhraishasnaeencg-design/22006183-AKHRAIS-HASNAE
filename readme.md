@@ -1,9 +1,23 @@
 ## Préparé par: AKHRAIS HASNAE
 <img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>                                                                    
-## **Compte rendu — Projet *StressLess***
+## Compte rendu — Projet *StressLess
+## 📑 Sommaire
+
+1. [Contexte métier & objectif](#1-contexte-métier--objectif)
+2. [Description du jeu de données](#2-description-du-jeu-de-données)
+3. [Nettoyage & préparation des données](#3-nettoyage--préparation-des-données-data-wrangling)
+4. [Analyse exploratoire des données (EDA)](#4-analyse-exploratoire-des-données-eda)
+   - 4.1 Distribution du niveau de stress  
+   - 4.2 Évolution temporelle du stress  
+   - 4.3 Analyse des corrélations  
+   - 4.4 Analyse des scénarios de test  
+5. [Modèles & métriques d’évaluation](#5-modèles--métriques-dévaluation)
+6. [Visualisations prévues](#6-visualisations-prévues)
+7. [Conclusion & perspectives](#7-conclusion)
 
 
-## #️⃣ 1. **Contexte métier & objectif**
+
+##  1. **Contexte métier & objectif**
 
 Le projet **StressLess** vise à analyser, prédire et visualiser l’évolution du **niveau de stress** d’un utilisateur en fonction de différentes variables (temps, habitudes, comportements, événements ou paramètres physiologiques selon le notebook).
 
@@ -18,7 +32,7 @@ Développer un système d’analyse permettant de :
 
 ---
 
-## #️⃣ 2. **Description du jeu de données**
+##  2. **Description du jeu de données**
 
 Le notebook StressLess semble utiliser des données structurées sous forme de DataFrame pandas, contenant typiquement :
 
@@ -33,7 +47,7 @@ Les données suivent une logique **temporelle**, permettant l’étude de tendan
 
 ---
 
-## #️⃣ 3. **Nettoyage & préparation (Data Wrangling)**
+##  3. **Nettoyage & préparation (Data Wrangling)**
 
 Étapes généralement observées dans le notebook :
 
@@ -66,18 +80,18 @@ df['stress_norm'] = MinMaxScaler().fit_transform(df[['stress_level']])
 
 ---
 
-## #️⃣ 4. **Analyse exploratoire (EDA)**
+## 4. **Analyse exploratoire (EDA)**
 
 L’exploration effectuée dans StressLess inclut généralement :
 
-### 📊 1. **Histogramme du stress**
+###  1. **Histogramme du stress**
 
 Pour identifier la distribution :
 
 * Stress plutôt concentré entre 40–70 ?
 * Présence de pics extrêmes ?
 
-### 📈 2. **Évolution temporelle**
+### 2. **Évolution temporelle**
 
 Graphique typique :
 
@@ -85,7 +99,7 @@ Graphique typique :
 * zones de hausse ou baisse significatives,
 * corrélation avec d’autres variables (sommeil, activité).
 
-### 🔗 3. **Matrice de corrélation**
+### 3. **Matrice de corrélation**
 
 Permet de détecter :
 
@@ -93,7 +107,7 @@ Permet de détecter :
 * relation entre stress et intensité d’activité,
 * autocorrélation temporelle.
 
-### 📌 4. Analyse des scénarios de test
+###  4. Analyse des scénarios de test
 
 Le notebook contient des **“scénarios simulés”** permettant de tester la logique de StressLess, par exemple :
 
@@ -103,7 +117,7 @@ Le notebook contient des **“scénarios simulés”** permettant de tester la l
 
 ---
 
-## #️⃣ 5. **Modèles & Métriques d’évaluation**
+## 5. **Modèles & Métriques d’évaluation**
 
 Même sans exécution, le notebook inclut généralement :
 
@@ -134,7 +148,7 @@ Chaque scénario teste :
 
 ---
 
-## #️⃣ 6. **Visualisations prévues**
+##  6. **Visualisations prévues**
 
 Selon les fonctions du notebook :
 
@@ -161,7 +175,7 @@ Permet de repérer les patterns.
 
 ---
 
-## #️⃣ 7. **Conclusion**
+## 7. **Conclusion**
 
 Le notebook **StressLess** met en place une chaîne d’analyse complète :
 
