@@ -5,221 +5,186 @@
 **Préparé par : AKHRAIS Hasnae**
 
 ---
+
 <img src="AKHRAIS HASNAE.jpg" style="height:464px;margin-right:432px"/>  
-## 1. Le Contexte Métier et la Mission
 
-### 1.1 Le Problème (Business Case)
+## 📑 Sommaire
 
-Dans le contexte actuel, le stress chronique constitue un enjeu majeur de santé publique et de performance professionnelle. Une mauvaise gestion du stress peut entraîner :
-
-* une baisse de productivité,
-* des troubles du sommeil,
-* des risques psychosociaux,
-* une dégradation du bien-être général.
-
-Cependant, le stress est une variable **subjective**, **évolutive dans le temps**, et influencée par plusieurs facteurs simultanés (activité, sommeil, charge de travail).
-
-**Problématique centrale :**
-
-> Comment analyser, suivre et anticiper l’évolution du niveau de stress d’un individu à partir de données temporelles et comportementales ?
-
-### 1.2 Objectif du projet
-
-Le projet **StressLess** vise à construire une chaîne complète d’analyse de données permettant :
-
-* d’explorer les niveaux de stress observés,
-* d’identifier les tendances temporelles,
-* de comprendre les relations entre stress et facteurs explicatifs,
-* de fournir des indicateurs exploitables par des professionnels du bien-être.
-
-L’objectif n’est pas uniquement prédictif, mais également **descriptif et préventif**, afin d’anticiper les périodes de stress élevé.
+1. [Contexte Métier et Mission](#1-contexte-métier-et-mission)
+   1.1 [Problème (Business Case)](#11-problème-business-case)
+   1.2 [Objectifs et enjeux métiers](#12-objectifs-et-enjeux-métiers)
+2. [Les Données – Input du Système](#2-les-données--input-du-système)
+   2.1 [Description des variables](#21-description-des-variables)
+   2.2 [Nature et qualité des données](#22-nature-et-qualité-des-données)
+3. [Laboratoire Python – Chaîne Technique](#3-laboratoire-python--chaîne-technique)
+4. [Analyse Approfondie : Nettoyage et Préparation (Data Wrangling)](#4-analyse-approfondie--nettoyage-et-préparation-data-wrangling)
+   4.1 [Problématique des valeurs manquantes](#41-problématique-des-valeurs-manquantes)
+   4.2 [Mécanique de l’imputation](#42-mécanique-de-limputation)
+   4.3 [Data Leakage : risque et bonne pratique](#43-data-leakage--risque-et-bonne-pratique)
+   4.4 [Normalisation des variables](#44-normalisation-des-variables)
+5. [Analyse Exploratoire des Données (EDA)](#5-analyse-exploratoire-des-données-eda)
+   5.1 [Statistiques descriptives](#51-statistiques-descriptives)
+   5.2 [Distribution et asymétrie](#52-distribution-et-asymétrie)
+   5.3 [Corrélations et redondances](#53-corrélations-et-redondances)
+6. [Méthodologie Expérimentale : Split & Généralisation](#6-méthodologie-expérimentale--split--généralisation)
+7. [Focus Théorique : Modélisation ML (Random Forest)](#7-focus-théorique--modélisation-ml-random-forest)
+   7.1 [Faiblesse d’un modèle isolé](#71-faiblesse-dun-modèle-isolé)
+   7.2 [Bagging et diversité](#72-bagging-et-diversité)
+   7.3 [Consensus et robustesse](#73-consensus-et-robustesse)
+8. [Évaluation et Audit de Performance](#8-évaluation-et-audit-de-performance)
+   8.1 [Matrice de confusion et erreurs](#81-matrice-de-confusion-et-erreurs)
+   8.2 [Métriques clés et priorisation](#82-métriques-clés-et-priorisation)
+9. [Visualisations et Interprétation](#9-visualisations-et-interprétation)
+10. [Conclusion et Perspectives](#10-conclusion-et-perspectives)
 
 ---
 
-## 2. Les Données (Input du Système)
+## 1. Contexte Métier et Mission
 
-Le projet repose sur un jeu de données structuré sous forme de **DataFrame pandas**, organisé selon une logique temporelle.
+### 1.1 Problème (Business Case)
+
+Le stress chronique représente un enjeu majeur de santé publique et de performance individuelle. Mal anticipé, il peut entraîner une baisse de productivité, des troubles du sommeil et des risques psychosociaux. Le stress est une variable **subjective**, **multifactorielle** et **évolutive dans le temps**, ce qui complique son analyse.
+
+### 1.2 Objectifs et enjeux métiers
+
+**StressLess** vise à concevoir un **assistant analytique** permettant le suivi, la compréhension et l’anticipation des niveaux de stress à partir de données temporelles et comportementales. L’enjeu métier est **préventif** : détecter tôt les situations à risque afin d’orienter des actions correctives.
+
+---
+
+## 2. Les Données – Input du Système
 
 ### 2.1 Description des variables
 
-| Variable       | Description                                      |
-| -------------- | ------------------------------------------------ |
-| `date`         | Date ou horodatage de l’observation              |
-| `stress_level` | Niveau de stress (échelle 0–100 ou 1–5)          |
-| `activity`     | Niveau ou intensité d’activité                   |
-| `sleep`        | Qualité ou durée du sommeil                      |
-| `workload`     | Charge de travail                                |
-| `user_id`      | Identifiant utilisateur (cas multi-utilisateurs) |
+| Variable       | Description                           |
+| -------------- | ------------------------------------- |
+| `date`         | Horodatage de l’observation           |
+| `stress_level` | Niveau de stress (échelle normalisée) |
+| `activity`     | Intensité de l’activité               |
+| `sleep`        | Qualité/durée du sommeil              |
+| `workload`     | Charge de travail                     |
+| `user_id`      | Identifiant utilisateur               |
 
-### 2.2 Nature des données
+### 2.2 Nature et qualité des données
 
-* Données **temporelles** (séries chronologiques),
-* Données **quantitatives continues**,
-* Données potentiellement **bruitées** ou **incomplètes**,
-* Possibilité de **variations inter-individuelles**.
-
-Ces caractéristiques rendent indispensable une phase rigoureuse de préparation et d’exploration.
+Les données sont **temporelles**, **quantitatives**, potentiellement **bruitées** et **incomplètes**, avec des variations inter-individuelles marquées. Ces caractéristiques imposent une préparation rigoureuse.
 
 ---
 
-## 3. Analyse Approfondie : Nettoyage et Préparation des Données (Data Wrangling)
+## 3. Laboratoire Python – Chaîne Technique
 
-### 3.1 Problématique des données manquantes
-
-Les algorithmes statistiques et analytiques ne peuvent pas fonctionner correctement en présence de valeurs manquantes (`NaN`). Une valeur absente peut fausser :
-
-* les moyennes,
-* les corrélations,
-* les visualisations temporelles.
-
-### 3.2 Stratégie de nettoyage adoptée
-
-Les étapes suivantes ont été appliquées :
-
-* **Imputation des valeurs manquantes** par la moyenne ou la médiane,
-* **Suppression des valeurs aberrantes**, notamment :
-
-  * stress négatif,
-  * stress supérieur au seuil maximal autorisé,
-* **Uniformisation des formats temporels**.
-
-```python
-df['date'] = pd.to_datetime(df['date'])
-df = df.sort_values('date')
-```
-
-### 3.3 Normalisation des variables
-
-Afin d’homogénéiser les échelles et faciliter l’analyse comparative, une normalisation de type Min-Max a été appliquée :
-
-```python
-from sklearn.preprocessing import MinMaxScaler
-df['stress_norm'] = MinMaxScaler().fit_transform(df[['stress_level']])
-```
-
-Cette étape permet d’éviter qu’une variable domine artificiellement les analyses.
+Le notebook Python constitue la **paillasse de laboratoire** du projet : acquisition, nettoyage, EDA, modélisation et évaluation. Il permet de simuler des scénarios réalistes et de tester la robustesse des choix méthodologiques.
 
 ---
 
-## 4. Analyse Exploratoire des Données (EDA)
+## 4. Analyse Approfondie : Nettoyage et Préparation (Data Wrangling)
 
-L’analyse exploratoire constitue une phase essentielle pour comprendre la structure interne des données avant toute interprétation avancée.
+### 4.1 Problématique des valeurs manquantes
 
-### 4.1 Distribution du niveau de stress
+Les algorithmes statistiques et de Machine Learning ne peuvent pas traiter directement les valeurs `NaN`. Une seule valeur manquante peut invalider un calcul matriciel ou fausser une corrélation.
 
-L’étude de la distribution du stress permet de répondre aux questions suivantes :
+### 4.2 Mécanique de l’imputation
 
-* Le stress est-il majoritairement modéré ou élevé ?
-* Existe-t-il des valeurs extrêmes ?
-* La distribution est-elle symétrique ou biaisée ?
-  <img src="Diagramme de Pareto.png" style="height:464px;margin-right:432px"/>  
-Un histogramme permet d’identifier les zones de concentration et les pics de stress.
+L’imputation (moyenne ou médiane) suit deux étapes :
+
+1. **Apprentissage (fit)** : calcul du paramètre statistique sur les données disponibles.
+2. **Transformation (transform)** : remplacement des valeurs manquantes par ce paramètre.
+
+### 4.3 Data Leakage : risque et bonne pratique
+
+Calculer les paramètres de nettoyage sur l’ensemble des données avant séparation peut introduire une **fuite d’information**. La bonne pratique consiste à :
+
+* séparer Train/Test,
+* apprendre les paramètres sur le Train,
+* appliquer au Test.
+
+### 4.4 Normalisation des variables
+
+Une normalisation Min-Max est appliquée afin d’homogénéiser les échelles et d’éviter qu’une variable domine artificiellement les analyses.
 
 ---
 
-### 4.2 Évolution temporelle du stress
+## 5. Analyse Exploratoire des Données (EDA)
 
-L’analyse temporelle met en évidence :
+### 5.1 Statistiques descriptives
 
-* les tendances générales (hausse ou baisse),
-* les cycles (journaliers, hebdomadaires),
-* les périodes critiques.
+Les statistiques de base (moyenne, médiane, écart-type) permettent de dresser le **profil global** du stress et de ses déterminants.
+
+### 5.2 Distribution et asymétrie
+
+La comparaison moyenne/médiane renseigne sur l’asymétrie. Une distribution fortement biaisée signale des périodes critiques ou des valeurs extrêmes.
+
+### 5.3 Corrélations et redondances
+
+Les matrices de corrélation identifient les relations fortes (ex. stress–workload) et les redondances potentielles entre variables explicatives.
+
+---
+
+## 6. Méthodologie Expérimentale : Split & Généralisation
+
+La séparation Train/Test garantit la **capacité de généralisation**. Le paramètre `random_state` assure la reproductibilité scientifique des résultats.
+
+---
+
+## 7. Focus Théorique : Modélisation ML (Random Forest)
+
+### 7.1 Faiblesse d’un modèle isolé
+
+Un modèle unique peut sur-apprendre le bruit et présenter une variance élevée.
+
+### 7.2 Bagging et diversité
+
+Le Random Forest introduit une diversité par **bootstrapping** des observations et **sélection aléatoire des variables**, réduisant la variance globale.
+
+### 7.3 Consensus et robustesse
+
+Les prédictions finales résultent d’un **vote majoritaire**, ce qui annule une partie des erreurs individuelles.
+
+---
+
+## 8. Évaluation et Audit de Performance
+
+### 8.1 Matrice de confusion et erreurs
+
+La matrice de confusion permet d’analyser les erreurs de prédiction et de distinguer faux positifs et faux négatifs selon les scénarios de stress.
+
+### 8.2 Métriques clés et priorisation
+
+Au-delà de l’accuracy, des métriques comme le **recall** sont privilégiées pour ne pas manquer des situations de stress élevé.
+
+---
+
+## 9. Visualisations et Interprétation
+
+Les visualisations constituent une étape clé du projet **StressLess**, car elles permettent de transformer des résultats analytiques en **enseignements exploitables pour la prise de décision**. Elles facilitent l’identification des tendances, des relations entre variables et des facteurs prioritaires de stress.
+
+### 9.1 Évolution temporelle du niveau de stress
+
 <img src="Courbe d’évolution du stress.png" style="height:464px;margin-right:432px"/>  
-La visualisation sous forme de courbe facilite l’interprétation de l’évolution du stress dans le temps et sa relation avec les événements quotidiens.
 
----
+Ce graphique illustre l’évolution du niveau de stress sur une période d’un mois. On observe une **tendance globale à la baisse**, avec un passage progressif d’un niveau élevé (environ 8,0) vers un niveau plus modéré (autour de 4,7). Cette dynamique suggère une amélioration graduelle de la situation, sans variations brusques ni pics critiques. La relative régularité de la trajectoire indique une évolution maîtrisée et cohérente dans le temps, compatible avec une meilleure gestion du quotidien.
 
-### 4.3 Analyse des corrélations
+### 9.2 Analyse des relations : matrice de corrélation
 
-La matrice de corrélation permet d’identifier les relations entre :
+<img src="matrice de corrélation.png" style="height:464px;margin-right:432px"/>
 
-* stress et sommeil,
-* stress et activité,
-* stress et charge de travail.
-<img src="matrice de corrélation.png" style="height:464px;margin-right:432px"/>  
-Elle aide à détecter les variables les plus influentes et à comprendre les mécanismes sous-jacents du stress.
+La matrice de corrélation met en évidence les liens entre les **facteurs de stress**, les **recommandations générées** et le **score global de stress**. Le score global présente une corrélation forte avec les recommandations (≈ 0,93), ce qui indique que ces dernières jouent un rôle central dans la synthèse de l’information. La corrélation plus modérée avec les facteurs initiaux (≈ 0,69) suggère que les recommandations agissent comme un mécanisme d’agrégation et d’amplification des signaux issus des variables explicatives.
 
----
+### 9.3 Priorisation des facteurs : diagramme de Pareto
 
-### 4.4 Analyse des scénarios de test
+<img src="Diagramme de Pareto.png" style="height:464px;margin-right:432px"/>  
 
-Afin de tester la robustesse du système, plusieurs **scénarios simulés** ont été intégrés :
+Le diagramme de Pareto permet d’identifier les facteurs de stress ayant l’impact le plus significatif. Il ressort que la **charge de travail** concentre à elle seule une part importante de la sévérité cumulée, atteignant rapidement le seuil des 80 %. Cette observation confirme l’intérêt d’une approche de priorisation : agir sur un nombre restreint de facteurs clés peut produire des effets significatifs sur le niveau global de stress.
 
-* surcharge de travail prolongée,
-* repos et amélioration du sommeil,
-* stress variable sur une courte période.
+### 9.4 Analyse croisée : heatmap activité / stress
+
 <img src="heatmap.png" style="height:464px;margin-right:432px"/>  
-Ces scénarios permettent de vérifier la cohérence des indicateurs et la réaction du système face à des situations extrêmes.
+
+La heatmap offre une lecture croisée de l’impact des différents scénarios sur les scores des facteurs, des recommandations et le score global. Les dimensions liées à l’**environnement de travail** et à l’**équilibre vie professionnelle / vie personnelle** apparaissent comme les plus influentes sur les recommandations et le score final. À l’inverse, l’**anxiété de performance** présente un impact négligeable dans ce jeu de données, ce qui peut indiquer soit une faible variabilité observée, soit un effet limité dans le modèle actuel.
+
+Dans leur ensemble, ces visualisations renforcent la compréhension des mécanismes du stress et constituent un **outil d’aide à la décision** pour orienter des actions préventives ciblées.
 
 ---
 
-## 5. Analyse Méthodologique : Indicateurs et Évaluation
+## 10. Conclusion et Perspectives
 
-### 5.1 Indicateurs clés de suivi
-
-Le projet StressLess s’appuie sur plusieurs métriques :
-
-* **Niveau moyen de stress**
-* **Volatilité du stress**
-* **Durée passée en zone de stress élevé**
-* **Amplitude des variations journalières**
-
-Ces indicateurs permettent un suivi précis et individualisé.
-
----
-
-### 5.2 Fonctions d’évaluation
-
-Le notebook intègre des fonctions dédiées à l’évaluation et à la visualisation :
-
-```python
-evaluate_stress_level()
-visualize_stress_evolution()
-visualize_correlation_matrix()
-```
-
-Chaque fonction est testée sur différents scénarios afin de garantir sa fiabilité.
-
----
-
-## 6. Visualisations et Interprétation
-
-Les visualisations prévues jouent un rôle central dans la compréhension des résultats :
-
-* **Courbe d’évolution du stress**
-  (date → stress_level)
-
-* **Matrice de corrélation**
-  entre sommeil, activité, charge de travail et stress
-
-* **Diagramme de Pareto**
-  pour identifier les principales sources de stress
-
-* **Heatmap activité / stress**
-  pour détecter des patterns comportementaux
-
-Ces outils facilitent la prise de décision et l’analyse préventive.
-
----
-
-## 7. Conclusion et Perspectives
-
-Le projet **StressLess** met en place une chaîne complète et cohérente d’analyse de données :
-
-* nettoyage rigoureux des données,
-* exploration statistique approfondie,
-* visualisation claire et interprétable,
-* tests via scénarios simulés.
-
-Il constitue une base solide pour le développement futur de :
-
-* tableaux de bord de suivi du stress,
-* systèmes de recommandation personnalisés,
-* outils de détection précoce d’anomalies,
-* assistants intelligents de bien-être.
-
-Ce projet illustre que l’analyse de données ne se limite pas à des graphiques, mais repose sur une compréhension métier, méthodologique et analytique rigoureuse.
-
----
-
-
+Le projet **StressLess** démontre qu’un projet Data Science est une **chaîne cohérente de décisions** reliant compréhension métier, préparation des données, choix méthodologiques et interprétation des résultats. Il ouvre la voie à des tableaux de bord avancés, des systèmes de recommandation personnalisés et des assistants intelligents de bien-être.
