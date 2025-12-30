@@ -11,12 +11,15 @@
 ## 📑 Sommaire
 
 1. [Contexte Métier et Mission](#1-contexte-métier-et-mission)
+   
    1.1 [Problème (Business Case)](#11-problème-business-case)
    1.2 [Objectifs et enjeux métiers](#12-objectifs-et-enjeux-métiers)
+   
 2. [Les Données – Input du Système](#2-les-données--input-du-système)
    2.1 [Description des variables](#21-description-des-variables)
    2.2 [Nature et qualité des données](#22-nature-et-qualité-des-données)
 3. [Laboratoire Python – Chaîne Technique](#3-laboratoire-python--chaîne-technique)
+   
 4. [Analyse Approfondie : Nettoyage et Préparation (Data Wrangling)](#4-analyse-approfondie--nettoyage-et-préparation-data-wrangling)
    4.1 [Problématique des valeurs manquantes](#41-problématique-des-valeurs-manquantes)
    4.2 [Mécanique de l’imputation](#42-mécanique-de-limputation)
